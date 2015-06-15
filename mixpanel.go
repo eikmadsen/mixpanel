@@ -61,6 +61,16 @@ func (p *People) Update(operation string, updateParams map[string]interface{}) (
 	return p.m.send("engage", params)
 }
 
+// Updates/Creates profile hopefully :-) Is created to skip a possibly unneeded identify step
+func (m *Mixpanel) UpdateProfile(distinctID string, operation string, updateParams map[string]interface{}) (*http.Response, error) {
+	params := map[string]interface{}{
+		"$token":       m.Token,
+		"$distinct_id": distinctID,
+	}
+	params[operation] = updateParams
+	return m.send("engage", params)
+}
+
 func (m *Mixpanel) to64(data string) string {
 	bytes := []byte(data)
 	return base64.StdEncoding.EncodeToString(bytes)
