@@ -22,7 +22,7 @@ func setup() {
 	}))
 
 	client = NewMixpanel("e3bc4100330c35722740fb8c6f5abddc")
-	client.ApiURL = ts.URL
+	client.APIURL = ts.URL
 }
 
 func teardown() {

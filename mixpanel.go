@@ -6,10 +6,10 @@ import (
 	"net/http"
 )
 
-// The Mixapanel struct store the mixpanel endpoint and the project token
+// Mixpanel struct store the mixpanel endpoint and the project token
 type Mixpanel struct {
 	Token  string
-	ApiURL string
+	APIURL string
 }
 
 // People represents a consumer, and is used on People Analytics
@@ -24,13 +24,13 @@ type trackParams struct {
 }
 
 // Track create a events to current distinct id
-func (m *Mixpanel) Track(distinctId string, eventName string,
+func (m *Mixpanel) Track(distinctID string, eventName string,
 	properties map[string]interface{}) (*http.Response, error) {
 	params := trackParams{Event: eventName}
 
 	params.Properties = make(map[string]interface{}, 0)
 	params.Properties["token"] = m.Token
-	params.Properties["distinct_id"] = distinctId
+	params.Properties["distinct_id"] = distinctID
 
 	for key, value := range properties {
 		params.Properties[key] = value
@@ -51,7 +51,7 @@ func (p *People) Track(eventName string, properties map[string]interface{}) (*ht
 	return p.m.Track(p.id, eventName, properties)
 }
 
-// Create a Update Operation to current people, see https://mixpanel.com/help/reference/http
+// Update creates an update operation to current people, see https://mixpanel.com/help/reference/http
 func (p *People) Update(operation string, updateParams map[string]interface{}) (*http.Response, error) {
 	params := map[string]interface{}{
 		"$token":       p.m.Token,
@@ -61,7 +61,7 @@ func (p *People) Update(operation string, updateParams map[string]interface{}) (
 	return p.m.send("engage", params)
 }
 
-// Updates/Creates profile. Is added to skip a sometimes unneeded identify step/httprequest.
+// UpdateProfile creates or updates the profile. Is added to skip a sometimes unneeded identify step/httprequest.
 func (m *Mixpanel) UpdateProfile(distinctID string, operation string, updateParams map[string]interface{}) (*http.Response, error) {
 	params := map[string]interface{}{
 		"$token":       m.Token,
@@ -81,7 +81,7 @@ func (m *Mixpanel) send(eventType string, params interface{}) (*http.Response, e
 	dataJSON, _ := json.Marshal(params)
 	data := string(dataJSON)
 
-	url := m.ApiURL + "/" + eventType + "?data=" + m.to64(data)
+	url := m.APIURL + "/" + eventType + "?data=" + m.to64(data)
 	return http.Get(url)
 }
 
@@ -89,6 +89,6 @@ func (m *Mixpanel) send(eventType string, params interface{}) (*http.Response, e
 func NewMixpanel(token string) *Mixpanel {
 	return &Mixpanel{
 		Token:  token,
-		ApiURL: "https://api.mixpanel.com",
+		APIURL: "https://api.mixpanel.com",
 	}
 }
